@@ -1,0 +1,2 @@
+MainPackage=E:\Work\Projects\Minecraft-Server-Status-Checker\Minecraft-Server-Status-Checker\bin\ARM\Debug\Minecraft-Server-Status-Checker_1.0.0.0_ARM_Debug.appx
+SymbolPackage=E:\Work\Projects\Minecraft-Server-Status-Checker\Minecraft-Server-Status-Checker\AppPackages\Minecraft-Server-Status-Checker_1.0.0.0_Debug_Test\Minecraft-Server-Status-Checker_1.0.0.0_ARM_Debug.appxsym

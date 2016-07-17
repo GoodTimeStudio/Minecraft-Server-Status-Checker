@@ -1,0 +1,19 @@
+﻿<Page
+    x:Class="Minecraft_Server_Status_Checker.ServerInfoPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Minecraft_Server_Status_Checker"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Image Source="{x:Bind ServerLogo}" Height="150" Width="150" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0"/>
+        <TextBlock Text="{x:Bind ServerName}" FontSize="50" TextWrapping="NoWrap" Margin="170,10,0,0" Height="60" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Right" Text="{x:Bind DisplayAddress}" VerticalAlignment="Top" Margin="0,10,10,0" Width="300" TextAlignment="Right" />
+        <Image Source="Assets/User-64x64.png" HorizontalAlignment="Left" Height="64" Margin="170,75,0,0" VerticalAlignment="Top" Width="64"/>
+        <TextBlock HorizontalAlignment="Left" FontSize="32" Height="47" Margin="235,85,0,0"  Text="{x:Bind ServerPlayers}" VerticalAlignment="Top" Width="250"/>
+        <TextBlock HorizontalAlignment="Left" Margin="10,170,0,0" TextWrapping="Wrap" Text="{x:Bind Motd}" VerticalAlignment="Top" Height="90" Width="1260" />
+        <ProgressBar HorizontalAlignment="Left" Height="10" VerticalAlignment="Top" Width="1260" Margin="10,0" IsIndeterminate="True" />
+    </Grid>
+</Page>

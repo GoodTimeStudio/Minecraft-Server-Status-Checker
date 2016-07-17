@@ -1,0 +1,177 @@
+﻿<Page
+    x:Class="Minecraft_Server_Status_Checker.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Minecraft_Server_Status_Checker"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Page.BottomAppBar>
+        <CommandBar x:Name="BottomAppBar" VerticalAlignment="Bottom">
+            <AppBarButton x:Name="SelectItmesBtn" FontFamily="OverflowCheckGlyph" Label="选择" Click="SelectItmesBtn_Click" >
+                <AppBarButton.Icon>
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xe762;" />
+                </AppBarButton.Icon>
+            </AppBarButton>
+            <AppBarButton x:Name="AddButton" Icon="Add" Label="新增" Click="AddButton_Click" />
+            <AppBarButton x:Name="SyncButton" Icon="Sync" Label="刷新"/>
+            <AppBarButton x:Name="DeleteItems" Icon="Delete" Label="删除服务器" Click="DeleteItems_Click" />
+            <AppBarButton x:Name="CancelSelection" Icon="Cancel" Label="取消选择" Click="CancelSelection_Click" />
+
+            <CommandBar.SecondaryCommands>
+                <AppBarButton Label="设置" Click="Settings_Click" Icon="Setting" />
+            </CommandBar.SecondaryCommands>
+        </CommandBar>
+    </Page.BottomAppBar>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="MasterColumn" Width="400"  />
+            <ColumnDefinition x:Name="DetailColumn" Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="PageSizeStatesGroup" CurrentStateChanged="PageSizeStatesGroup_CurrentStateChanged">
+
+                <VisualState x:Name="WideState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="720"  />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="MasterColumn.Width" Value="400" />
+                        <Setter Target="DetailColumn.Width" Value="*"/>
+                    </VisualState.Setters>
+                </VisualState>
+
+                <VisualState x:Name="NarrowState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0"  />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="DetailContent.Visibility" Value="Collapsed" />
+                        <Setter Target="MasterColumn.Width" Value="*" />
+                        <Setter Target="DetailColumn.Width" Value="0"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+
+            <VisualStateGroup 
+                x:Name="MasterDetailsStatesGroup" 
+                CurrentStateChanged="MasterDetailsStatesGroup_CurrentStateChanged">
+                
+                <VisualState x:Name="MasterState">
+                    <VisualState.Setters>
+                        <Setter Target="ServerList.SelectionMode" Value="None" />
+                        <Setter Target="ServerList.IsItemClickEnabled" Value="True" />
+
+                        <Setter Target="DeleteItems.Visibility" Value="Collapsed" />
+                        <Setter Target="CancelSelection.Visibility" Value="Collapsed" />
+
+                    </VisualState.Setters>
+                </VisualState>
+
+                <VisualState x:Name="MasterDetailsState">
+                    <VisualState.Setters>
+                        <Setter Target="ServerList.SelectionMode" Value="Single" />
+                        <Setter Target="ServerList.IsItemClickEnabled" Value="False" />
+
+                        <Setter Target="DeleteItems.Visibility" Value="Collapsed" />
+                        <Setter Target="CancelSelection.Visibility" Value="Collapsed" />
+
+                    </VisualState.Setters>
+                </VisualState>
+
+                <VisualState x:Name="MultipleSelectionState">
+                    <VisualState.Setters>
+                        <Setter Target="ServerList.SelectionMode" Value="Multiple" />
+                        <Setter Target="ServerList.IsItemClickEnabled" Value="False" />
+                        
+                        <Setter Target="SelectItmesBtn.Visibility" Value="Collapsed" />
+                        <Setter Target="AddButton.Visibility" Value="Collapsed" />
+                    </VisualState.Setters>
+                </VisualState>
+
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+            <Border Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}" VerticalAlignment="Top" >
+            <TextBlock Text="我的服务器" Margin="24,8,8,8"
+                           Style="{ThemeResource TitleTextBlockStyle}" />
+        </Border>
+
+        <ListView 
+            x:Name="ServerList"
+            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    	    ItemClick="ServerList_ItemClick" 
+            Margin="0,48,0,0" 
+            SelectionChanged="ServerList_SelectionChanged"
+            ItemsSource="{x:Bind Servers}">
+
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="local:Server">
+                    <Grid>
+                        <Image Source="{x:Bind ServerLogo}" Height="100" Width="100" HorizontalAlignment="Left"/>
+                        <TextBlock Text="{x:Bind ServerName}" FontSize="24" TextWrapping="NoWrap" Margin="110,0,0,0" Height="28" VerticalAlignment="Top"/>
+                        <ProgressBar HorizontalAlignment="Center" Margin="110,0,10,0" VerticalAlignment="Bottom" IsIndeterminate="True" Width="200" />
+                        <TextBlock HorizontalAlignment="Left" Text="{x:Bind DisplayAddress}" VerticalAlignment="Top" Margin="110,70,0,0" Width="200" />
+                        <Image Source="Assets/user-black.png" HorizontalAlignment="Left" Height="32" Margin="110,32,0,0" VerticalAlignment="Top" Width="32"/>
+                        <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Height="24" Margin="142,38,0,0"  Text="{x:Bind ServerPlayers}" VerticalAlignment="Top" Width="100"/>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <Frame
+            x:Name="DetailContent"
+            Grid.Column="1"
+            BorderThickness="1,0,0,0"
+            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}">
+
+            <Frame.ContentTransitions>
+                <TransitionCollection/>
+            </Frame.ContentTransitions>
+        </Frame>
+<!--
+        <ContentPresenter
+                x:Name="DetailContentPresenter"
+                Grid.Column="1"
+                BorderThickness="1,0,0,0"
+                Padding="24,0"
+                BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                Content="{x:Bind ServerList.SelectedItem, Mode=OneWay}">
+
+            <ContentPresenter.ContentTemplate>
+                <DataTemplate>
+                    <local:ServerDetailsTemplate server="{Binding Path=ServerList.SelectedItem}"/>
+                </DataTemplate>
+            </ContentPresenter.ContentTemplate>
+
+            <ContentPresenter.ContentTransitions>
+                <TransitionCollection/>
+            </ContentPresenter.ContentTransitions>
+        </ContentPresenter>
+-->
+        
+        <ContentDialog x:Name="AddServer" Title="添加服务器" PrimaryButtonText="添加" SecondaryButtonText="取消"
+    			Opened="AddServer_Opened" PrimaryButtonClick="AddServer_PrimaryButtonClick" IsPrimaryButtonEnabled="False" d:IsHidden="True">
+            <StackPanel>
+                <TextBox x:Name="textServerName" Header="服务器名称" TextChanged="TextChanged" />
+                <TextBox x:Name="textServerAddress" Header="服务器地址" TextChanged="TextChanged" />
+                <TextBox x:Name="textServerPort" Header="服务器端口" InputScope="Number" TextChanged="TextChanged" />
+                <TextBlock x:Name="textErr" Foreground="Red" />
+                <ComboBox x:Name="ServerVersion" Header="服务器版本">
+                    <TextBlock Text="1.7 - 1.8"/>
+                    <TextBlock Text="1.6"/>
+                    <TextBlock Text="1.4 - 1.5" />
+                    <TextBlock Text="Beta 1.8 - 1.3" />
+                    <TextBlock Text="PE" />
+                </ComboBox>
+            </StackPanel>
+        </ContentDialog>
+
+    </Grid>
+</Page>
