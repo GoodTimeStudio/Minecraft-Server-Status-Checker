@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace GoodTimeStudio.ServerPinger
+namespace Minecraft_Server_Status_Checker.Status
 {
     public class VarintHelper
     {

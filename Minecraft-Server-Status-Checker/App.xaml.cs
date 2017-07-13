@@ -74,7 +74,7 @@ namespace Minecraft_Server_Status_Checker
                 HardwareButtons.BackPressed += CoreManager.OnBackPressed;
             }
             
-            MainPage.PreServers = await CoreManager.LoadConfig();
+            MainPage.PreServers = await CoreManager.LoadServersList();
 
             //===================================
 

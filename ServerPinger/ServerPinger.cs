@@ -11,20 +11,19 @@ using Newtonsoft.Json;
 using System.Diagnostics;
 #endif
 
-namespace GoodTimeStudio.ServerPinger
+namespace Minecraft_Server_Status_Checker.Status
 {
 
     public class ServerPinger
     {
-        public int timeout = 8000;
 
         public string ServerName;
         public string ServerAddress;
         public int ServerPort;
-        public PingVersion ServerVersion;
+        public ServerVersion ServerVersion;
 
         public ServerPinger(string ServerName, string ServerAddress,
-            int ServerPort, PingVersion ServerVersion)
+            int ServerPort, ServerVersion ServerVersion)
         {
             this.ServerName = ServerName;
             this.ServerAddress = ServerAddress;
@@ -35,7 +34,7 @@ namespace GoodTimeStudio.ServerPinger
         public async Task<ServerStatus> GetStatus()
         {
             try {
-                if (ServerVersion == PingVersion.MC_Current)
+                if (ServerVersion == ServerVersion.MC_Current)
                 {
                     return await GetStatusCurrent();
                 }
@@ -101,7 +100,23 @@ namespace GoodTimeStudio.ServerPinger
 #if DEBUG
                     Debug.WriteLine("Parsing response json");
 #endif
-                    return JsonConvert.DeserializeObject<ServerStatus>(json);
+
+                    ServerStatus status;
+                    try
+                    {
+                        status = JsonConvert.DeserializeObject<ServerStatus>(json);
+                        status.ServerName = ServerName;
+                        status.ServerAddress = ServerAddress;
+                        status.ServerPort = ServerPort;
+                        status.ServerVersion = ServerVersion;
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.WriteLine(e.Message);
+                        return null;
+                    }
+
+                    return status;
                 }
             }
             catch

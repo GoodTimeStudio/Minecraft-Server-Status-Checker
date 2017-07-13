@@ -1,11 +1,10 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.Generic;
 
-namespace GoodTimeStudio.ServerPinger
+namespace Minecraft_Server_Status_Checker.Status
 {
     /*
      * http://wiki.vg/Server_List_Ping
-     */     
+     */
     [JsonObject]
     public class ServerStatus
     {
@@ -13,13 +12,13 @@ namespace GoodTimeStudio.ServerPinger
         [JsonIgnore]public string ServerName;
         [JsonIgnore]public string ServerAddress;
         [JsonIgnore]public int ServerPort;
-        [JsonIgnore]public PingVersion ServerVersion;
+        [JsonIgnore]public ServerVersion ServerVersion;
 
-        public ServerVersion version;
-        public ServerPlayers players;
+        public ServerVersionDescription version;
+        public ServerPlayersInfo players;
         public Description description;
-        public string favicon;
-        //TO-DO: mod list
+        public string favicon; //iamge base64 code
+        public ModInfo modinfo;
         
     }  
 }

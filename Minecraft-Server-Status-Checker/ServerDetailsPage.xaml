@@ -2,9 +2,9 @@
     x:Class="Minecraft_Server_Status_Checker.ServerDetailsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Minecraft_Server_Status_Checker"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:pinger="using:Minecraft_Server_Status_Checker.Status"
     mc:Ignorable="d">
 
     <Grid>
@@ -12,14 +12,14 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="10"/>
                 <RowDefinition Height="170"/>
-                <RowDefinition Height="75"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <ProgressBar Height="10" VerticalAlignment="Top" IsIndeterminate="True" Grid.ColumnSpan="2" Margin="10,0" />
+            <ProgressBar Height="10" VerticalAlignment="Top" IsIndeterminate="True"
+                         Grid.ColumnSpan="2" Margin="10,0" Visibility="{x:Bind server.ProgressVisable}" />
             <Image  Height="150" Width="150" Margin="10,10,0,0" Grid.Row="1" Source="{x:Bind server.ServerLogo}">
                 <Image.HorizontalAlignment>
                     <HorizontalAlignment>Left</HorizontalAlignment>
@@ -35,15 +35,59 @@
             <Image Source="Assets/User-64x64.png" HorizontalAlignment="Left" Height="32"
                Width="32" Margin="170,85,0,0" VerticalAlignment="Top" Grid.Row="1" />
             <TextBlock FontSize="24" Height="32" Margin="202,85,10,0"
-                   Text="{x:Bind server.ServerPlayers}" VerticalAlignment="Top" Grid.Row="1" />
+                   Text="{x:Bind server.DisplayServerPlayers}" VerticalAlignment="Top" Grid.Row="1"
+                       Visibility="{x:Bind server.DisplayServerPlayersVisable}" />
+            <TextBlock FontSize="24" Height="32" Margin="202,85,10,0"
+                   Text="{x:Bind server.DisplayMassage}" VerticalAlignment="Top" Grid.Row="1" Width="250" 
+                       Visibility="{x:Bind server.DisplayMassageVisable}" HorizontalAlignment="Left" />
+   
+            <Pivot Grid.Row="2" x:Name="pivot">
+                <PivotItem Header="概览" x:Name="pivotOverview">
+                    <StackPanel>
+                        <TextBlock Text="版本信息" Margin="10" FontWeight="Bold" FontSize="20" />
+                        <TextBlock Text="{x:Bind  server.status.version.name}" Margin="10,0" />
 
-            <TextBlock Text="版本信息" Grid.Row="2" Margin="10" />
+                        <TextBlock Text="描述信息" Margin="10" FontWeight="Bold" FontSize="20" />
+                        <TextBlock Margin="10,0" x:Name="MotdTextBlock" />
 
-            <Pivot Grid.Row="3" x:Name="pivot">
-                <PivotItem Header="玩家">
-                    <TextBlock Text="Test 玩家" />
+                        <TextBlock Text="附加信息" Margin="10" FontWeight="Bold" FontSize="20" />
+                        <TextBlock Text="Test" Margin="10,0" />
+                    </StackPanel>
                 </PivotItem>
-                <PivotItem Header="Mod">
+                
+                <PivotItem Header="玩家" x:Name="pivotPlayer" > 
+                    <ScrollViewer>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition Height="32"/>
+                            </Grid.RowDefinitions>
+
+                            <ListView x:Name="PlayerList"
+                              ItemsSource="{x:Bind sample}">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate x:DataType="pinger:Player">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="32" />
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <Image Source="{x:Bind face}" />
+                                            <TextBlock Grid.Column="1" Text="{x:Bind name}" VerticalAlignment="Center" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+
+                            </ListView>
+
+                            <TextBlock Grid.Row="1" Text="{x:Bind RemainPlayersMsg}" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind RemainPlayersMsgVisibility}" />
+                        </Grid>
+                    </ScrollViewer>
+                    
+                </PivotItem>
+                
+                <PivotItem Header="Mod" x:Name="pivotMod">
                     <TextBlock Text="Test Mod" />
                 </PivotItem>
             </Pivot>

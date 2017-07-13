@@ -11,8 +11,8 @@
     <AssemblyName>Minecraft-Server-Status-Checker</AssemblyName>
     <DefaultLanguage>zh-CN</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.10586.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.10240.0</TargetPlatformMinVersion>
+    <TargetPlatformVersion>10.0.15063.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.10586.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -20,6 +20,7 @@
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
+    <PackageCertificateThumbprint>E251A17C8D3146A61370A053A39D955884F4E1BF</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -105,13 +106,15 @@
     <Compile Include="EmptyDetailPage.xaml.cs">
       <DependentUpon>EmptyDetailPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MainPage.xaml.cs" />
+    <Compile Include="MainPage.xaml.cs">
+      <DependentUpon>MainPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="ServerDetailsPage.xaml.cs">
       <DependentUpon>ServerDetailsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ServerPing\ServerStatus.cs" />
+    <Compile Include="ServerStatusLoadedEvent.cs" />
     <Compile Include="SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
@@ -124,6 +127,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\ServerLogo.png" />
+    <Content Include="Assets\steve-32x32.png" />
     <Content Include="Assets\User-64x64.png" />
     <Content Include="Assets\user-black.png" />
     <Content Include="Assets\user-white.png" />
@@ -146,8 +150,8 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="MainPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ServerDetailsPage.xaml">
       <SubType>Designer</SubType>
@@ -165,7 +169,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <SDKReference Include="WindowsMobile, Version=10.0.10586.0">
+    <SDKReference Include="WindowsMobile, Version=10.0.15063.0">
       <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>

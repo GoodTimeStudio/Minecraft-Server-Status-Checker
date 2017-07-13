@@ -11,7 +11,7 @@
     <AssemblyName>ServerPing</AssemblyName>
     <DefaultLanguage>zh-CN</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.10586.0</TargetPlatformVersion>
+    <TargetPlatformVersion>10.0.15063.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.10586.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
@@ -108,12 +108,14 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Player.cs" />
+    <Compile Include="Base64Helper.cs" />
+    <Compile Include="FormattingCode.cs" />
     <Compile Include="ServerPinger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerStatus.cs" />
+    <Compile Include="SkinHelper.cs" />
     <Compile Include="VarintHelper.cs" />
-    <Compile Include="Misc.cs" />
+    <Compile Include="ServerDetails.cs" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

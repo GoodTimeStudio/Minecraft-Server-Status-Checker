@@ -1,8 +1,8 @@
-﻿using GoodTimeStudio.ServerPinger;
+﻿using Minecraft_Server_Status_Checker.Status;
 using System;
-using System.IO;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using Windows.Storage.Streams;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -10,75 +10,67 @@ namespace Minecraft_Server_Status_Checker
 {
     public class Server
     {
-        public ImageSource ServerLogo;
         public string ServerName;
         public string ServerAddress;
-        public string ServerPlayers;
         public int port;
-        public string DisplayAddress;
-        public string Motd;
+        public ServerVersion version;
 
-        public Server(string ServerName, string ServerAddress, int port)
+        public ServerStatus status;
+
+        public ImageSource ServerLogo;
+        public string DisplayServerPlayers;  
+        public string DisplayAddress;
+        public Visibility ProgressVisable = Visibility.Visible;
+        public Visibility DisplayServerPlayersVisable = Visibility.Collapsed;
+        public string DisplayMassage;
+        public Visibility DisplayMassageVisable;
+
+        public Server(string ServerName, string ServerAddress, int port, ServerVersion version)
         {
             this.ServerName = ServerName;
             this.ServerAddress = ServerAddress;
             this.port = port;
+            this.version = version;
+
             DisplayAddress = ServerAddress + ":" + port;
-            ServerPlayers = "正在获取...";
+            DisplayMassage = "正在获取...";
             ServerLogo = new BitmapImage(new Uri("ms-appx:///Assets/ServerLogo.png"));
 
-            GetServerInfo();
+            GetServerStatus();       
         }
 
-        public async void GetServerInfo()
+        public async void GetServerStatus()
         {
-            ServerPinger ping = new ServerPinger(ServerName, ServerAddress, port, PingVersion.MC_Current);
+            ServerPinger ping = new ServerPinger(ServerName, ServerAddress, port, version);
             ServerStatus status = await ping.GetStatus();
             
             if (status != null)
             {
+                this.status = status;
+
                 SetServerPlayers(status.players.online, status.players.max);
                 if (!string.IsNullOrEmpty(status.favicon))
                 {
                     var icon = status.favicon;
-                    ServerLogo = await Base64ToImage(icon.Substring(icon.LastIndexOf(',') + 1));
+                    ServerLogo = await Base64Helper.Base64ToImage(icon.Substring(icon.LastIndexOf(',') + 1));
                 }
+
+                DisplayMassageVisable = Visibility.Collapsed;
+                DisplayServerPlayersVisable = Visibility.Visible;
             }
+            else
+            {
+                DisplayMassage = "获取服务器信息失败";
+            }
+
+            ProgressVisable = Visibility.Collapsed;
         }
 
         public void SetServerPlayers(int online, int max)
         {
-            ServerPlayers = online + "/" + max;
+            DisplayServerPlayers = online + "/" + max;
         }
-
-        public async  static Task<BitmapImage> Base64ToImage(string strimage)
-        {
-            try
-            {
-                byte[] bitmapArray;
-                bitmapArray = Convert.FromBase64String(strimage);
-                MemoryStream ms = new MemoryStream(bitmapArray);
-                InMemoryRandomAccessStream randomAccessStream = new InMemoryRandomAccessStream();
-                //将randomAccessStream 转成 IOutputStream
-                var outputstream = randomAccessStream.GetOutputStreamAt(0);
-                //实例化一个DataWriter
-                DataWriter datawriter = new DataWriter(outputstream);
-                //将Byte数组数据写进OutputStream
-                datawriter.WriteBytes(bitmapArray);
-                //在缓冲区提交数据到一个存储区
-                await datawriter.StoreAsync();
-
-                //将InMemoryRandomAccessStream给位图
-                BitmapImage bitmapImage = new BitmapImage();
-                bitmapImage.SetSource(randomAccessStream);
-
-                return bitmapImage;
-            }
-            catch
-            {
-                return null;
-            }
-        }
+       
 
     }
 

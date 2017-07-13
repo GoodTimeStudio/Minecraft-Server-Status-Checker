@@ -25,7 +25,7 @@ namespace Minecraft_Server_Status_Checker
         }
 
         #region config
-        internal static async Task<ObservableCollection<Server>> LoadConfig()
+        internal static async Task<ObservableCollection<Server>> LoadServersList()
         {
             ObservableCollection<Server> ret = new ObservableCollection<Server>();
 
@@ -41,7 +41,7 @@ namespace Minecraft_Server_Status_Checker
                 foreach (JsonValue value in array)
                 {
                     JsonObject SubObj = value.GetObject();
-                    Server server = new Server(SubObj["Name"].GetString(), SubObj["Address"].GetString(), int.Parse(SubObj["Port"].GetString()));
+                    Server server = new Server(SubObj["Name"].GetString(), SubObj["Address"].GetString(), int.Parse(SubObj["Port"].GetString()), Status.ServerVersion.MC_Current);
                     ret.Add(server);
                 }
 
@@ -61,7 +61,7 @@ namespace Minecraft_Server_Status_Checker
             return null;
         }
 
-        internal static async void SaveServersToConfig(ObservableCollection<Server> Servers)
+        internal static async void SaveServersList(ObservableCollection<Server> Servers)
         {
             JsonObject obj = new JsonObject();
             JsonArray array = new JsonArray();

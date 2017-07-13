@@ -40,6 +40,8 @@ namespace Minecraft_Server_Status_Checker
 
         public MainPage()
         {
+            NavigationCacheMode = NavigationCacheMode.Enabled;
+
             if (PreServers != null)
             {
                 Servers = PreServers;
@@ -50,7 +52,7 @@ namespace Minecraft_Server_Status_Checker
                     ServersName.Add(server.ServerName);
                 }
             }
-            else
+            else if (Servers == null)
             {
                 Servers = new ObservableCollection<Server>();
             }
@@ -97,7 +99,13 @@ namespace Minecraft_Server_Status_Checker
                 new InvalidOperationException();
             }
         }
-          
+
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        {
+
+        }
+
+
         private void PageSizeStatesGroup_CurrentStateChanged(object sender, VisualStateChangedEventArgs e)
         {
             bool isNarrow = e.NewState == NarrowState;
@@ -169,11 +177,11 @@ namespace Minecraft_Server_Status_Checker
             {
                 this.textServerPort.Text = "25565";
             }
-            Server server = new Server(this.textServerName.Text, this.textServerAddress.Text, int.Parse(this.textServerPort.Text));
+            Server server = new Server(this.textServerName.Text, this.textServerAddress.Text, int.Parse(this.textServerPort.Text), Status.ServerVersion.MC_Current);
 
             ServersName.Add(this.textServerName.Text);
             Servers.Add(server);
-            CoreManager.SaveServersToConfig(Servers);
+            CoreManager.SaveServersList(Servers);
         }
 
         private void TextChanged(object sender, TextChangedEventArgs e)
@@ -226,6 +234,9 @@ namespace Minecraft_Server_Status_Checker
                 Servers.Remove(server);
                 ServersName.Remove(server.ServerName);
             }
+
+            CoreManager.SaveServersList(Servers);
+
             if (PreState != null)
             {
                 VisualStateManager.GoToState(this, PreState.Name, true);
