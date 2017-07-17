@@ -194,3 +194,19 @@ FakesAssemblies/
 
 # Visual Studio 6 workspace options file
 *.opt
+
+
+
+
+
+### Custom
+
+# Build
+BundleArtifacts/*
+
+#Temp
+*.lock
+
+#Others
+Minecraft-Server-Status-Checker.nuget.props
+Minecraft-Server-Status-Checker.nuget.targets
