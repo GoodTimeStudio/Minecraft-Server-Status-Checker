@@ -205,7 +205,7 @@ FakesAssemblies/
 BundleArtifacts/*
 
 #Temp
-*.lock
+*.lock.json
 
 #Others
 Minecraft-Server-Status-Checker.nuget.props
