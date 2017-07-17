@@ -40,8 +40,6 @@ namespace Minecraft_Server_Status_Checker
 
             foreach (string str in strs)
             {
-                if (str.Equals("§e§lhome of\n"))
-                    Debug.WriteLine("break");
 
                 //+1 (last §)
                 //+1 (last codeBody)
@@ -201,34 +199,37 @@ namespace Minecraft_Server_Status_Checker
             //===============
             //将最后一组字符串增加到strs
             lastIndex = motd.LastIndexOf("§");
-            subStr = motd.Substring(lastIndex);
-            codeStr = subStr.Substring(0, 2);
-            text = subStr.Substring(2);
-
-            FormattingCode _format = FormattingCode.GetTypeFromCode(codeStr);
-            string _formats = "";
-            if (_format != null)
+            if (lastIndex > 0)
             {
-                if (_format == FormattingCode.Reset)
+                subStr = motd.Substring(lastIndex);
+                codeStr = subStr.Substring(0, 2);
+                text = subStr.Substring(2);
+
+                FormattingCode _format = FormattingCode.GetTypeFromCode(codeStr);
+                string _formats = "";
+                if (_format != null)
                 {
-                    formattingCodesStr.Clear();
-                    lastSingleColorCodeStr = "";
+                    if (_format == FormattingCode.Reset)
+                    {
+                        formattingCodesStr.Clear();
+                        lastSingleColorCodeStr = "";
+                    }
+                    else
+                    {
+                        formattingCodesStr.Add(codeStr);
+                        foreach (string str in formattingCodesStr)
+                        {
+                            _formats += str;
+                        }
+                    }
                 }
                 else
                 {
-                    formattingCodesStr.Add(codeStr);
-                    foreach (string str in formattingCodesStr)
-                    {
-                        _formats += str;
-                    }
+                    lastSingleColorCodeStr = codeStr;
                 }
-            }
-            else
-            {
-                lastSingleColorCodeStr = codeStr;
-            }
 
-            ret.Add(lastSingleColorCodeStr + _formats + text);
+                ret.Add(lastSingleColorCodeStr + _formats + text);
+            }
 
             return ret;
         }

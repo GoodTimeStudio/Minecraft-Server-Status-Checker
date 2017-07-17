@@ -110,6 +110,9 @@
   <ItemGroup>
     <Compile Include="Base64Helper.cs" />
     <Compile Include="FormattingCode.cs" />
+    <Compile Include="Motd\Style.cs" />
+    <Compile Include="Motd\TextComponentBase.cs" />
+    <Compile Include="Motd\TextFormatting.cs" />
     <Compile Include="ServerPinger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerStatus.cs" />
