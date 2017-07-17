@@ -52,7 +52,15 @@ namespace Minecraft_Server_Status_Checker.Status
             {
                 using (StreamSocket socket = new StreamSocket())
                 {
-                    await socket.ConnectAsync(new HostName(ServerAddress), ServerPort.ToString());
+                    try
+                    {
+                        await socket.ConnectAsync(new HostName(ServerAddress), ServerPort.ToString());
+                    }
+                    catch (Exception)
+                    {
+                        //dns srv record
+                        await socket.ConnectAsync(new HostName(ServerAddress), "minecraft");
+                    }
                     BinaryWriter writer;
 
                     #region handshake
