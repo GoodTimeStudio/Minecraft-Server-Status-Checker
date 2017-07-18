@@ -1,6 +1,5 @@
 ﻿{
   "dependencies": {
-    "LumiaImagingSDK.UWP": "3.0.593",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
     "Newtonsoft.Json": "9.0.1"
   },
