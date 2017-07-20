@@ -100,11 +100,6 @@ namespace Minecraft_Server_Status_Checker
             }
         }
 
-        protected override async void OnNavigatedTo(NavigationEventArgs e)
-        {
-
-        }
-
 
         private void PageSizeStatesGroup_CurrentStateChanged(object sender, VisualStateChangedEventArgs e)
         {

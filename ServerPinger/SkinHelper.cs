@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Lumia.Imaging;
+using Lumia.Imaging.Transforms;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -148,7 +150,10 @@ namespace Minecraft_Server_Status_Checker.Status
             if (skinStream != null)
             {
                 IRandomAccessStream stream = skinStream.AsRandomAccessStream();
-                return await CropImage(stream, new Rect(8, 8, 8, 8), 4);
+                StreamImageSource source = new StreamImageSource(skinStream);
+                //return await CropImage(stream, new Rect(8, 8, 8, 8), 4);
+                var tmp = await CropImageNew(source, new Rect(8, 8, 8, 8));
+                return await ResizeBitmap(tmp, 32, 32);
             }
 
             return null;
@@ -210,6 +215,35 @@ namespace Minecraft_Server_Status_Checker.Status
             source.Dispose();
 
             return cropBmp;
+        }
+
+        public static async Task<WriteableBitmap> CropImageNew(IImageProvider source, Rect cropAera)
+        {
+            WriteableBitmap ret = new WriteableBitmap((int) cropAera.Width, (int) cropAera.Height);
+
+            using (CropEffect croper = new CropEffect(source, cropAera))
+            {
+                using (WriteableBitmapRenderer render = new WriteableBitmapRenderer(croper, ret))
+                {
+                    render.OutputOption = OutputOption.Stretch;
+                    await render.RenderAsync();
+                }
+            }
+
+            return ret;
+        }
+
+        public static async Task<WriteableBitmap> ResizeBitmap(WriteableBitmap source, int width, int height)
+        {
+            AutoResizeConfiguration config = new AutoResizeConfiguration();
+            config.ResizeMode = AutoResizeMode.Automatic;
+            config.MaxImageSize = new Size(width, height);
+            config.MinImageSize = new Size(width, height);
+
+            IBuffer output = await JpegTools.AutoResizeAsync(source.PixelBuffer, config);
+            WriteableBitmap ret = new WriteableBitmap(width, height);
+            ret.SetSource(output.AsStream().AsRandomAccessStream());
+            return ret;
         }
     }
 }

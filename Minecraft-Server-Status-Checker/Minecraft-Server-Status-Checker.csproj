@@ -110,6 +110,7 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RepeatedTileImageSource.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="ServerDetailsPage.xaml.cs">
       <DependentUpon>ServerDetailsPage.xaml</DependentUpon>
@@ -126,11 +127,13 @@
     <None Include="Minecraft-Server-Status-Checker_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\Background.png" />
     <Content Include="Assets\ServerLogo.png" />
     <Content Include="Assets\steve-32x32.png" />
     <Content Include="Assets\User-64x64.png" />
     <Content Include="Assets\user-black.png" />
     <Content Include="Assets\user-white.png" />
+    <Content Include="Lumia-imaging-sdk-License.txt" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />

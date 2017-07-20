@@ -1,5 +1,6 @@
 ﻿{
   "dependencies": {
+    "LumiaImagingSDK.UWP": "3.0.593",
     "Microsoft.ApplicationInsights": "2.2.0",
     "Microsoft.ApplicationInsights.PersistenceChannel": "2.0.0-beta3",
     "Microsoft.ApplicationInsights.WindowsApps": "1.1.1",
