@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:pinger="using:Minecraft_Server_Status_Checker.Status"
+    xmlns:motd="using:Minecraft_Server_Status_Checker.Status.Motd"
     mc:Ignorable="d">
 
     <Grid>
@@ -48,8 +49,8 @@
                         <TextBlock Text="{x:Bind  server.status.version.name}" Margin="10,0" />
 
                         <TextBlock Text="描述信息" Margin="10" FontWeight="Bold" FontSize="20" />
-                        <TextBlock Margin="10,0" x:Name="MotdTextBlock" />
-
+                        <motd:TextComponentBlock x:Name="MotdTextBlock" />
+                        
                         <TextBlock Text="附加信息" Margin="10" FontWeight="Bold" FontSize="20" />
                         <TextBlock Text="Test" Margin="10,0" />
                     </StackPanel>

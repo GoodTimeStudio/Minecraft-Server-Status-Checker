@@ -1,28 +1,55 @@
-﻿using System;
-using System.Collections;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GoodTimeStudio.ServerPing.Motd
+namespace Minecraft_Server_Status_Checker.Status.Motd
 {
-    class TextComponentBase : IEnumerable<TextComponentBase>
+    public class TextComponentBase
     {
-        /// <summary>
-        /// The later siblings of this component.  If this component turns the text bold, that will apply to all the siblings
-        /// until a later sibling turns the text something else.
-        /// </summary>
-        public List<TextComponentBase> siblings = new List<TextComponentBase>();
+        [JsonConverter(typeof(ColorConverter))]
+        public ColorCode color;
 
-        public IEnumerator<TextComponentBase> GetEnumerator()
+        public bool? bold;
+        public bool? italic;
+        public bool? underlined;
+        public bool? strikethrough;
+        public bool? obfuscated;
+
+        public void Reset()
         {
-            throw new NotImplementedException();
+            bold = false;
+            italic = false;
+            underlined = false;
+            strikethrough = false;
+            obfuscated = false;
+
+            color = ColorCode.DefaultColor;
+        }
+    }
+
+    public class ColorConverter : CustomCreationConverter<ColorCode>
+    {
+        public override ColorCode Create(Type objectType)
+        {
+            return null;
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            throw new NotImplementedException();
+            if (reader.Value != null && reader.ValueType == typeof(string))
+            {
+                return ColorCode.GetColorCodeFromColorName(reader.Value.ToString());
+            }
+            return base.ReadJson(reader, objectType, existingValue, serializer);
+        }
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            writer.WriteValue(((ColorCode)value).name);
         }
     }
 }

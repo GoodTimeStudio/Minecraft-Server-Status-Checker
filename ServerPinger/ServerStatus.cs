@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Minecraft_Server_Status_Checker.Status.Motd;
+using Newtonsoft.Json;
 
 namespace Minecraft_Server_Status_Checker.Status
 {
@@ -16,7 +17,8 @@ namespace Minecraft_Server_Status_Checker.Status
 
         public ServerVersionDescription version;
         public ServerPlayersInfo players;
-        public Description description;
+        [JsonConverter(typeof(TextComponentConverter))]
+        public TextComponent description;
         public string favicon; //iamge base64 code
         public ModInfo modinfo;
         

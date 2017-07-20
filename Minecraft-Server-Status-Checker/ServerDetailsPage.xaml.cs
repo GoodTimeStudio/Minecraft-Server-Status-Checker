@@ -1,4 +1,5 @@
 ﻿using Minecraft_Server_Status_Checker.Status;
+using Minecraft_Server_Status_Checker.Status.Motd;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -48,41 +49,41 @@ namespace Minecraft_Server_Status_Checker
                 string text = str.Substring(str.LastIndexOf("§") + 2);
 
                 ColorCode color = null;
-                List<FormattingCode> farmattings = new List<FormattingCode>();
+                List<StyleCode> farmattings = new List<StyleCode>();
                 foreach (string codeBody in codeArray)
                 {
-                    if (FormattingCode.IsFormattingCode("§" + codeBody))
+                    if (StyleCode.IsStyleCode("§" + codeBody))
                     {
-                        farmattings.Add(FormattingCode.GetTypeFromCode("§" + codeBody));
+                        farmattings.Add(StyleCode.GetTypeFromCode("§" + codeBody));
                     }
                     else
                     {
-                        color = ColorCode.GetStyleColorFromCode("§" + codeBody);
+                        color = ColorCode.GetColorCodeFromCode("§" + codeBody);
                     }
                 }
 
                 Run run = new Run();
                 Underline under = null;
 
-                foreach (FormattingCode format in farmattings)
+                foreach (StyleCode format in farmattings)
                 {
-                    if (format == FormattingCode.Obfuscated)
+                    if (format == StyleCode.Obfuscated)
                     {
 
                     }
-                    else if (format == FormattingCode.Bold)
+                    else if (format == StyleCode.Bold)
                     {
                         run.FontWeight = FontWeights.Bold;
                     }
-                    else if (format == FormattingCode.Strikethrough)
+                    else if (format == StyleCode.Strikethrough)
                     {
 
                     }
-                    else if (format == FormattingCode.Underline)
+                    else if (format == StyleCode.Underline)
                     {
                         under = new Underline();
                     }
-                    else if (format == FormattingCode.Italic)
+                    else if (format == StyleCode.Italic)
                     {
                         run.FontStyle = FontStyle.Italic;
                     }
@@ -101,7 +102,7 @@ namespace Minecraft_Server_Status_Checker
                 }
                 else
                 {
-                    MotdTextBlock.Inlines.Add(run);
+                    //MotdTextBlock.Inlines.Add(run);
                     run.Text = text;
                 }
             }
@@ -141,11 +142,11 @@ namespace Minecraft_Server_Status_Checker
                         text = subStr.Substring(2);
 
                         //判断codeStr所属代码类型
-                        FormattingCode format = FormattingCode.GetTypeFromCode(codeStr);
+                        StyleCode format = StyleCode.GetTypeFromCode(codeStr);
                         string formats = "";
                         if (format != null)
                         {
-                            if (format == FormattingCode.Reset)
+                            if (format == StyleCode.Reset)
                             {
                                 formattingCodesStr.Clear();
                                 lastSingleColorCodeStr = "";
@@ -171,10 +172,10 @@ namespace Minecraft_Server_Status_Checker
                     {
                         codeStr = motd.Substring(lastIndex, count);
 
-                        FormattingCode format = FormattingCode.GetTypeFromCode(codeStr);
+                        StyleCode format = StyleCode.GetTypeFromCode(codeStr);
                         if (format != null)
                         {
-                            if (format == FormattingCode.Reset)
+                            if (format == StyleCode.Reset)
                             {
                                 formattingCodesStr.Clear();
                                 lastSingleColorCodeStr = "";
@@ -205,11 +206,11 @@ namespace Minecraft_Server_Status_Checker
                 codeStr = subStr.Substring(0, 2);
                 text = subStr.Substring(2);
 
-                FormattingCode _format = FormattingCode.GetTypeFromCode(codeStr);
+                StyleCode _format = StyleCode.GetTypeFromCode(codeStr);
                 string _formats = "";
                 if (_format != null)
                 {
-                    if (_format == FormattingCode.Reset)
+                    if (_format == StyleCode.Reset)
                     {
                         formattingCodesStr.Clear();
                         lastSingleColorCodeStr = "";
@@ -241,23 +242,23 @@ namespace Minecraft_Server_Status_Checker
             server = e.Parameter as Server;
             if (server.status != null)
             {
-                if (server.status.players.sample != null)
-                {          
+                if (server.status.players != null && server.status.players.sample != null)
+                {
                     sample = new ObservableCollection<Player>();
 
                     foreach (Player player in server.status.players.sample)
                     {
                         player.face = new BitmapImage(new Uri("ms-appx:///Assets/steve-32x32.png"));
-                        /*
+
                         WriteableBitmap face = await SkinHelper.GetPlayerFaceAsync(player.name);
                         if (face != null)
                         {
                             player.face = face;
                         }
-                        */
+
                         sample.Add(player);
                     }
-                                  
+
                     if (sample.Count < server.status.players.online)
                     {
                         RemainPlayersMsgVisibility = Visibility.Visible;
@@ -274,12 +275,15 @@ namespace Minecraft_Server_Status_Checker
                     pivot.Items.Remove(pivotMod);
                 }
 
+                MotdTextBlock.Content = server.status.description;
+
+                /*
                 if (!string.IsNullOrEmpty(server.status.description.text))
                 {
                     ParseAndShowMotd(server.status.description.text);
-                }
+                }*/
             }
-   
+
         }
     }
 }
