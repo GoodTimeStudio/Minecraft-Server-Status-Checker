@@ -48,7 +48,9 @@ namespace Minecraft_Server_Status_Checker
             {
                 this.status = status;
 
-                SetServerPlayers(status.players.online, status.players.max);
+                if (status.players != null)
+                    SetServerPlayers(status.players.online, status.players.max);
+
                 if (!string.IsNullOrEmpty(status.favicon))
                 {
                     var icon = status.favicon;
