@@ -8,7 +8,10 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid>
+    <Grid Background="#BF040404" BorderThickness="2">
+        <Grid.BorderBrush>
+            <SolidColorBrush Color="#FF966C4A"/>
+        </Grid.BorderBrush>
         <RichTextBlock x:Name="TextBlock" />
     </Grid>
 </UserControl>

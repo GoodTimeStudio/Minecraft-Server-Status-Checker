@@ -236,7 +236,7 @@ namespace Minecraft_Server_Status_Checker.Status
         public static async Task<WriteableBitmap> ResizeBitmap(WriteableBitmap source, int width, int height)
         {
             AutoResizeConfiguration config = new AutoResizeConfiguration();
-            config.ResizeMode = AutoResizeMode.Automatic;
+            config.ResizeMode = AutoResizeMode.PreserveSourceEncodingQuality;
             config.MaxImageSize = new Size(width, height);
             config.MinImageSize = new Size(width, height);
 
