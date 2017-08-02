@@ -1,10 +1,16 @@
-﻿using Minecraft_Server_Status_Checker.Status;
+﻿using Lumia.Imaging;
+using Lumia.Imaging.Extras.ImageSources;
+using Minecraft_Server_Status_Checker.Status;
 using Minecraft_Server_Status_Checker.Status.Motd;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Text.RegularExpressions;
+using Windows.Foundation;
+using Windows.Storage;
+using Windows.Storage.Streams;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -30,216 +36,12 @@ namespace Minecraft_Server_Status_Checker
         public ServerDetailsPage()
         {
             this.InitializeComponent();
+
+            Loaded += OnLoaded;
         }
 
-        /// <param name="motd">no null</param>
-        private void ParseAndShowMotd(string motd)
+        private async void OnLoaded(object sender, RoutedEventArgs e)
         {
-            Regex reg = new Regex("§");
-            //换行后格式样式将会重置，替换后方便下一步处理
-            List<string> strs = SplitMotdToList(motd.Replace("\n", "\n§r"));
-
-            foreach (string str in strs)
-            {
-
-                //+1 (last §)
-                //+1 (last codeBody)
-                string codes = str.Substring(0, str.LastIndexOf("§") + 2);
-                string[] codeArray = codes.Split('§');
-                string text = str.Substring(str.LastIndexOf("§") + 2);
-
-                ColorCode color = null;
-                List<StyleCode> farmattings = new List<StyleCode>();
-                foreach (string codeBody in codeArray)
-                {
-                    if (StyleCode.IsStyleCode("§" + codeBody))
-                    {
-                        farmattings.Add(StyleCode.GetTypeFromCode("§" + codeBody));
-                    }
-                    else
-                    {
-                        color = ColorCode.GetColorCodeFromCode("§" + codeBody);
-                    }
-                }
-
-                Run run = new Run();
-                Underline under = null;
-
-                foreach (StyleCode format in farmattings)
-                {
-                    if (format == StyleCode.Obfuscated)
-                    {
-
-                    }
-                    else if (format == StyleCode.Bold)
-                    {
-                        run.FontWeight = FontWeights.Bold;
-                    }
-                    else if (format == StyleCode.Strikethrough)
-                    {
-
-                    }
-                    else if (format == StyleCode.Underline)
-                    {
-                        under = new Underline();
-                    }
-                    else if (format == StyleCode.Italic)
-                    {
-                        run.FontStyle = FontStyle.Italic;
-                    }
-                }
-
-                //color
-                if (color != null)
-                {
-                    SolidColorBrush brush = new SolidColorBrush(color.color);
-                    run.Foreground = brush;
-                }
-
-                if (under != null)
-                {
-
-                }
-                else
-                {
-                    //MotdTextBlock.Inlines.Add(run);
-                    run.Text = text;
-                }
-            }
-        }
-
-        /// <summary>
-        /// 将Motd拆分成小段，方便后期处理
-        /// </summary>
-        private static List<string> SplitMotdToList(string motd)
-        {
-            List<string> ret = new List<string>();
-            Regex reg = new Regex("§");
-
-            //获取motd中样式代码的个数
-            int codeCount = reg.Matches(motd).Count;
-
-            //current
-            string subStr;
-            string codeStr;
-            string text;
-
-            int lastIndex = -1;
-            string lastSingleColorCodeStr = "";
-            List<string> formattingCodesStr = new List<string>();
-            for (int i = 0; i < codeCount; i++)
-            {
-                int index = motd.IndexOf("§", lastIndex + 1);
-
-                if (lastIndex >= 0 && index > 0)
-                {
-
-                    int count = index - lastIndex;
-                    if (count >= 3)
-                    {
-                        subStr = motd.Substring(lastIndex, count);
-                        codeStr = subStr.Substring(0, 2);
-                        text = subStr.Substring(2);
-
-                        //判断codeStr所属代码类型
-                        StyleCode format = StyleCode.GetTypeFromCode(codeStr);
-                        string formats = "";
-                        if (format != null)
-                        {
-                            if (format == StyleCode.Reset)
-                            {
-                                formattingCodesStr.Clear();
-                                lastSingleColorCodeStr = "";
-                            }
-                            else
-                            {
-                                formattingCodesStr.Add(codeStr);
-                                foreach (string str in formattingCodesStr)
-                                {
-                                    formats += str;
-                                }
-                            }
-                        }
-                        //format为空，则该代码不是格式代码
-                        else
-                        {
-                            lastSingleColorCodeStr = codeStr;
-                        }
-
-                        ret.Add(lastSingleColorCodeStr + formats + text);
-                    }
-                    else if (count >= 2)
-                    {
-                        codeStr = motd.Substring(lastIndex, count);
-
-                        StyleCode format = StyleCode.GetTypeFromCode(codeStr);
-                        if (format != null)
-                        {
-                            if (format == StyleCode.Reset)
-                            {
-                                formattingCodesStr.Clear();
-                                lastSingleColorCodeStr = "";
-                            }
-                            else
-                            {
-                                formattingCodesStr.Add(codeStr);
-                            }
-                        }
-                        //如果不是FormattingCode
-                        else
-                        {
-                            lastSingleColorCodeStr = codeStr;
-                        }
-
-                    }
-                }
-
-                lastIndex = index;
-            }
-
-            //===============
-            //将最后一组字符串增加到strs
-            lastIndex = motd.LastIndexOf("§");
-            if (lastIndex > 0)
-            {
-                subStr = motd.Substring(lastIndex);
-                codeStr = subStr.Substring(0, 2);
-                text = subStr.Substring(2);
-
-                StyleCode _format = StyleCode.GetTypeFromCode(codeStr);
-                string _formats = "";
-                if (_format != null)
-                {
-                    if (_format == StyleCode.Reset)
-                    {
-                        formattingCodesStr.Clear();
-                        lastSingleColorCodeStr = "";
-                    }
-                    else
-                    {
-                        formattingCodesStr.Add(codeStr);
-                        foreach (string str in formattingCodesStr)
-                        {
-                            _formats += str;
-                        }
-                    }
-                }
-                else
-                {
-                    lastSingleColorCodeStr = codeStr;
-                }
-
-                ret.Add(lastSingleColorCodeStr + _formats + text);
-            }
-
-            return ret;
-        }
-
-        protected override async void OnNavigatedTo(NavigationEventArgs e)
-        {
-            base.OnNavigatedTo(e);
-
-            server = e.Parameter as Server;
             if (server.status != null)
             {
                 if (server.status.players != null && server.status.players.sample != null)
@@ -249,12 +51,12 @@ namespace Minecraft_Server_Status_Checker
                     foreach (Player player in server.status.players.sample)
                     {
                         player.face = new BitmapImage(new Uri("ms-appx:///Assets/steve-32x32.png"));
-
+                        /*
                         WriteableBitmap face = await SkinHelper.GetPlayerFaceAsync(player.name);
                         if (face != null)
                         {
                             player.face = face;
-                        }
+                        }*/
 
                         sample.Add(player);
                     }
@@ -277,13 +79,17 @@ namespace Minecraft_Server_Status_Checker
 
                 MotdTextBlock.Content = server.status.description;
 
-                /*
-                if (!string.IsNullOrEmpty(server.status.description.text))
-                {
-                    ParseAndShowMotd(server.status.description.text);
-                }*/
             }
-
         }
+
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+
+            server = e.Parameter as Server;
+            
+        }
+
     }
+
 }

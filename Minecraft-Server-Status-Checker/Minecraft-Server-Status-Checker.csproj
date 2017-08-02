@@ -127,7 +127,6 @@
     <None Include="Minecraft-Server-Status-Checker_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\Background.png" />
     <Content Include="Assets\ServerLogo.png" />
     <Content Include="Assets\steve-32x32.png" />
     <Content Include="Assets\User-64x64.png" />
