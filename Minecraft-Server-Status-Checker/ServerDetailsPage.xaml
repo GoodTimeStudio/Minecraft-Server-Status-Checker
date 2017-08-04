@@ -49,7 +49,12 @@
                         <TextBlock Text="{x:Bind  server.status.version.name}" Margin="10,0" />
 
                         <TextBlock Text="描述信息" Margin="10" FontWeight="Bold" FontSize="20" />
-                        <motd:TextComponentBlock x:Name="MotdTextBlock" />
+                        <Grid Background="#BF040404" BorderThickness="2">
+                            <Grid.BorderBrush>
+                                <SolidColorBrush Color="#FF966C4A"/>
+                            </Grid.BorderBrush>
+                            <motd:TextComponentBlock x:Name="MotdTextBlock" />
+                        </Grid>
                         
                         <TextBlock Text="附加信息" Margin="10" FontWeight="Bold" FontSize="20" />
                         <TextBlock Text="Test" Margin="10,0" />
