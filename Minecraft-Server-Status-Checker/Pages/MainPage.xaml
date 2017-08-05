@@ -62,7 +62,7 @@
             <VisualStateGroup 
                 x:Name="MasterDetailsStatesGroup" 
                 CurrentStateChanged="MasterDetailsStatesGroup_CurrentStateChanged">
-                
+
                 <VisualState x:Name="MasterState">
                     <VisualState.Setters>
                         <Setter Target="ServerList.SelectionMode" Value="None" />
@@ -89,7 +89,7 @@
                     <VisualState.Setters>
                         <Setter Target="ServerList.SelectionMode" Value="Multiple" />
                         <Setter Target="ServerList.IsItemClickEnabled" Value="False" />
-                        
+
                         <Setter Target="SelectItmesBtn.Visibility" Value="Collapsed" />
                         <Setter Target="AddButton.Visibility" Value="Collapsed" />
                     </VisualState.Setters>
@@ -98,7 +98,8 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-            <Border Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}" VerticalAlignment="Top" >
+        <ProgressBar x:Name="ProgressBar" VerticalAlignment="Top"  IsIndeterminate="True" Visibility="{Binding pinging}"/>
+        <Border Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}" VerticalAlignment="Top" >
             <TextBlock Text="我的服务器" Margin="24,8,8,8"
                            Style="{ThemeResource TitleTextBlockStyle}" />
         </Border>
@@ -109,23 +110,30 @@
     	    ItemClick="ServerList_ItemClick" 
             Margin="0,48,0,0" 
             SelectionChanged="ServerList_SelectionChanged"
-            ItemsSource="{x:Bind Servers}" Width="354">
+            ItemsSource="{x:Bind Servers}" >
 
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="local:Server">
                     <Grid>
-                        <Image Source="{x:Bind ServerLogo}" Height="100" Width="100" HorizontalAlignment="Left"/>
-                        <TextBlock Text="{x:Bind ServerName}" FontSize="24" TextWrapping="NoWrap" Margin="110,0,0,0" Height="28" VerticalAlignment="Top"/>
-                        <ProgressBar HorizontalAlignment="Center" Margin="110,20,10,0" VerticalAlignment="Center"
-                                     IsIndeterminate="True" Width="200" Visibility="{x:Bind ProgressVisable}" />
-                        <TextBlock HorizontalAlignment="Left" Text="{x:Bind DisplayAddress}" VerticalAlignment="Top" Margin="110,70,0,0" Width="200" />
-                        <Image Source="Assets/user-black.png" HorizontalAlignment="Left" Height="32" Margin="110,32,0,0" VerticalAlignment="Top" Width="32"/>
-                        <TextBlock HorizontalAlignment="Left" Height="24" Margin="142,38,0,0"  
-                                   Text="{x:Bind DisplayServerPlayers}" VerticalAlignment="Top" 
-                                   Width="100" Visibility="{x:Bind DisplayServerPlayersVisable}" />
-                        <TextBlock Height="24" Margin="142,38,0,0"
-                                   Text="{x:Bind DisplayMassage}" VerticalAlignment="Top" 
-                                   Width="200" Visibility="{x:Bind DisplayMassageVisable}" HorizontalAlignment="Left" />
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <Image Source="{Binding ServerLogo}" Height="100" Width="100" HorizontalAlignment="Left"/>
+
+                        <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                            <TextBlock Text="{x:Bind ServerName}" FontSize="24" TextWrapping="NoWrap" Height="28" VerticalAlignment="Top"/>
+                            <Grid>
+                                <Image Source="Assets/user-black.png" HorizontalAlignment="Left" Height="32" VerticalAlignment="Top" Width="32"/>
+                                <TextBlock Height="32" Text="{Binding DisplayServerPlayers}" 
+                                   Visibility="{Binding DisplayServerPlayersVisable}" Margin="37,0,0,0" />
+                                <TextBlock Height="32" Margin="37,0,0,0" Text="{Binding DisplayMassage}"
+                                   Visibility="{Binding DisplayMassageVisable}" />
+                            </Grid>
+                            <TextBlock HorizontalAlignment="Left" Text="{x:Bind DisplayAddress}" VerticalAlignment="Top" Width="200" />
+                        </StackPanel>
+
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
@@ -135,33 +143,14 @@
             x:Name="DetailContent"
             Grid.Column="1"
             BorderThickness="1,0,0,0"
+            Padding="24,0"
             BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}">
 
             <Frame.ContentTransitions>
                 <TransitionCollection/>
             </Frame.ContentTransitions>
         </Frame>
-<!--
-        <ContentPresenter
-                x:Name="DetailContentPresenter"
-                Grid.Column="1"
-                BorderThickness="1,0,0,0"
-                Padding="24,0"
-                BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                Content="{x:Bind ServerList.SelectedItem, Mode=OneWay}">
 
-            <ContentPresenter.ContentTemplate>
-                <DataTemplate>
-                    <local:ServerDetailsTemplate server="{Binding Path=ServerList.SelectedItem}"/>
-                </DataTemplate>
-            </ContentPresenter.ContentTemplate>
-
-            <ContentPresenter.ContentTransitions>
-                <TransitionCollection/>
-            </ContentPresenter.ContentTransitions>
-        </ContentPresenter>
--->
-        
         <ContentDialog x:Name="AddServer" Title="添加服务器" PrimaryButtonText="添加" SecondaryButtonText="取消"
     			Opened="AddServer_Opened" PrimaryButtonClick="AddServer_PrimaryButtonClick" IsPrimaryButtonEnabled="False" d:IsHidden="True">
             <StackPanel>
@@ -170,7 +159,7 @@
                 <TextBox x:Name="textServerPort" Header="服务器端口" InputScope="Number" TextChanged="TextChanged" />
                 <TextBlock x:Name="textErr" Foreground="Red" />
                 <ComboBox x:Name="ServerVersion" Header="服务器版本">
-                    <TextBlock Text="1.7 - 1.8"/>
+                    <TextBlock Text="1.7 or later"/>
                     <TextBlock Text="1.6"/>
                     <TextBlock Text="1.4 - 1.5" />
                     <TextBlock Text="Beta 1.8 - 1.3" />

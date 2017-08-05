@@ -1,21 +1,8 @@
-﻿using Lumia.Imaging;
-using Lumia.Imaging.Extras.ImageSources;
-using Minecraft_Server_Status_Checker.Status;
-using Minecraft_Server_Status_Checker.Status.Motd;
+﻿using Minecraft_Server_Status_Checker.Status;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.IO;
-using System.Text.RegularExpressions;
-using Windows.Foundation;
-using Windows.Storage;
-using Windows.Storage.Streams;
-using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
@@ -82,7 +69,7 @@ namespace Minecraft_Server_Status_Checker
             }
         }
 
-        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
 

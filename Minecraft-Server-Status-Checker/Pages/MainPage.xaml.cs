@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
+using System.Threading.Tasks;
 using Windows.Data.Json;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -32,11 +33,23 @@ namespace Minecraft_Server_Status_Checker
         public static ObservableCollection<Server> PreServers;
 
         private ObservableCollection<Server> Servers;
-        private List<string> ServersName = new List<string>();
         public Server selected;
 
         private bool IsOnMultipleSelectionState;
         private VisualState PreState;
+
+        private List<Server> QueueList = new List<Server>();
+
+        public bool pinging
+        {
+            get { return (bool)GetValue(pingingProperty); }
+            set { SetValue(pingingProperty, value); }
+        }
+
+        public static readonly DependencyProperty pingingProperty =
+            DependencyProperty.Register("pinging", typeof(bool), typeof(MainPage), new PropertyMetadata(false));
+
+
 
         public MainPage()
         {
@@ -47,18 +60,21 @@ namespace Minecraft_Server_Status_Checker
                 Servers = PreServers;
                 PreServers = null;
 
-                foreach (Server server in Servers)
-                {
-                    ServersName.Add(server.ServerName);
-                }
             }
             else if (Servers == null)
             {
                 Servers = new ObservableCollection<Server>();
             }
+            Refresh();
 
             InitializeComponent();
             Loaded += OnLoaded;
+        }
+
+        private async void Refresh()
+        {
+            QueueList.AddRange(Servers);
+            await StartPingAsync();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -99,7 +115,6 @@ namespace Minecraft_Server_Status_Checker
                 new InvalidOperationException();
             }
         }
-
 
         private void PageSizeStatesGroup_CurrentStateChanged(object sender, VisualStateChangedEventArgs e)
         {
@@ -166,7 +181,7 @@ namespace Minecraft_Server_Status_Checker
             textServerPort.ClearValue(TextBox.TextProperty);
         }
 
-        private void AddServer_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void AddServer_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             if (string.IsNullOrEmpty(this.textServerPort.Text))
             {
@@ -174,18 +189,15 @@ namespace Minecraft_Server_Status_Checker
             }
             Server server = new Server(this.textServerName.Text, this.textServerAddress.Text, int.Parse(this.textServerPort.Text), Status.ServerVersion.MC_Current);
 
-            ServersName.Add(this.textServerName.Text);
             Servers.Add(server);
-            CoreManager.SaveServersList(Servers);
+            await CoreManager.SaveServersList(Servers);
+            AddToPingQueue(server);
+            await StartPingAsync();
         }
 
         private void TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (this.ServersName.Contains(this.textServerName.Text))
-            {
-                this.textErr.Text = "服务器名已存在";
-            }
-            else if (string.IsNullOrEmpty(this.textServerAddress.Text))
+            if (string.IsNullOrEmpty(this.textServerAddress.Text))
             {
                 this.textErr.Text = "服务器地址不能为空";
             }
@@ -227,7 +239,6 @@ namespace Minecraft_Server_Status_Checker
             foreach (Server server in InDeleteServerList) 
             {
                 Servers.Remove(server);
-                ServersName.Remove(server.ServerName);
             }
 
             CoreManager.SaveServersList(Servers);
@@ -267,6 +278,24 @@ namespace Minecraft_Server_Status_Checker
             }
             return true;
         }
-   
+
+        public void AddToPingQueue(Server server)
+        {
+            QueueList.Add(server);
+        }
+
+        public async Task StartPingAsync()
+        {
+            pinging = true;
+
+            foreach (Server server in QueueList)
+            {
+                await server.GetServerStatusAsync();
+            }
+
+            pinging = false;
+            QueueList.Clear();
+        }
+
     }
 }

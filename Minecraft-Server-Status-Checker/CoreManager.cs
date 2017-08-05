@@ -61,7 +61,7 @@ namespace Minecraft_Server_Status_Checker
             return null;
         }
 
-        internal static async void SaveServersList(ObservableCollection<Server> Servers)
+        internal static async Task SaveServersList(ObservableCollection<Server> Servers)
         {
             JsonObject obj = new JsonObject();
             JsonArray array = new JsonArray();

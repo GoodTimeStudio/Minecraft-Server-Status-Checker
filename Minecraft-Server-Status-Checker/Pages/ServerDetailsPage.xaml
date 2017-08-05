@@ -19,8 +19,6 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <ProgressBar Height="10" VerticalAlignment="Top" IsIndeterminate="True"
-                         Grid.ColumnSpan="2" Margin="10,0" Visibility="{x:Bind server.ProgressVisable}" />
             <Image  Height="150" Width="150" Margin="10,10,0,0" Grid.Row="1" Source="{x:Bind server.ServerLogo}">
                 <Image.HorizontalAlignment>
                     <HorizontalAlignment>Left</HorizontalAlignment>
@@ -49,11 +47,11 @@
                         <TextBlock Text="{x:Bind  server.status.version.name}" Margin="10,0" />
 
                         <TextBlock Text="描述信息" Margin="10" FontWeight="Bold" FontSize="20" />
-                        <Grid Background="#BF040404" BorderThickness="2">
+                        <Grid Background="#BF040404" BorderThickness="2" HorizontalAlignment="Left">
                             <Grid.BorderBrush>
                                 <SolidColorBrush Color="#FF966C4A"/>
                             </Grid.BorderBrush>
-                            <motd:TextComponentBlock x:Name="MotdTextBlock" />
+                            <motd:TextComponentBlock x:Name="MotdTextBlock" Margin="0,0,20,0" />
                         </Grid>
                         
                         <TextBlock Text="附加信息" Margin="10" FontWeight="Bold" FontSize="20" />
