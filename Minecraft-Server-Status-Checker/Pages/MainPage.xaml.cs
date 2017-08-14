@@ -65,19 +65,18 @@ namespace Minecraft_Server_Status_Checker
             {
                 Servers = new ObservableCollection<Server>();
             }
-            Refresh();
 
             InitializeComponent();
             Loaded += OnLoaded;
         }
 
-        private async void Refresh()
+        private async Task RefreshAsync()
         {
             QueueList.AddRange(Servers);
             await StartPingAsync();
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        private async void OnLoaded(object sender, RoutedEventArgs e)
         {
             // If the app starts in narrow mode - showing only the Master listView - 
             // it is necessary to set the commands and the selection mode.
@@ -114,6 +113,8 @@ namespace Minecraft_Server_Status_Checker
             {
                 new InvalidOperationException();
             }
+
+            await RefreshAsync();
         }
 
         private void PageSizeStatesGroup_CurrentStateChanged(object sender, VisualStateChangedEventArgs e)
@@ -296,6 +297,5 @@ namespace Minecraft_Server_Status_Checker
             pinging = false;
             QueueList.Clear();
         }
-
     }
 }
