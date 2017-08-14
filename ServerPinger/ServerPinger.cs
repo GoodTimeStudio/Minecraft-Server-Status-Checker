@@ -6,6 +6,7 @@ using Windows.Networking;
 using Windows.Networking.Sockets;
 using System.IO;
 using Newtonsoft.Json;
+using System.Threading;
 
 #if DEBUG
 using System.Diagnostics;
@@ -16,6 +17,8 @@ namespace Minecraft_Server_Status_Checker.Status
 
     public class ServerPinger
     {
+
+        public const int TIME_OUT = 30;
 
         public string ServerName;
         public string ServerAddress;
@@ -52,14 +55,16 @@ namespace Minecraft_Server_Status_Checker.Status
             {
                 using (StreamSocket socket = new StreamSocket())
                 {
+                    CancellationTokenSource cts = new CancellationTokenSource();
+                    cts.CancelAfter(TIME_OUT * 1000);
                     try
                     {
-                        await socket.ConnectAsync(new HostName(ServerAddress), ServerPort.ToString());
+                        await socket.ConnectAsync(new HostName(ServerAddress), ServerPort.ToString()).AsTask(cts.Token);
                     }
                     catch (Exception)
                     {
                         //dns srv record
-                        await socket.ConnectAsync(new HostName(ServerAddress), "minecraft");
+                        await socket.ConnectAsync(new HostName(ServerAddress), "minecraft").AsTask(cts.Token);
                     }
                     BinaryWriter writer;
 
