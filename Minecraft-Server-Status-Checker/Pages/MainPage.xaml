@@ -125,7 +125,7 @@
                         <StackPanel Grid.Column="1" Margin="10,0,0,0">
                             <TextBlock Text="{x:Bind ServerName}" FontSize="24" TextWrapping="NoWrap" Height="28" VerticalAlignment="Top"/>
                             <Grid>
-                                <Image Source="Assets/user-black.png" HorizontalAlignment="Left" Height="32" VerticalAlignment="Top" Width="32"/>
+                                <Image Source="ms-appx:///Assets/user-black.png" HorizontalAlignment="Left" Height="32" VerticalAlignment="Top" Width="32"/>
                                 <TextBlock Height="32" Text="{Binding DisplayServerPlayers}" 
                                    Visibility="{Binding DisplayServerPlayersVisable}" Margin="37,0,0,0" />
                                 <TextBlock Height="32" Margin="37,0,0,0" Text="{Binding DisplayMassage}"

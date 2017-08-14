@@ -31,7 +31,7 @@
                    Margin="170,10,0,0" Height="60" VerticalAlignment="Top" Grid.Row="1"/>
             <TextBlock HorizontalAlignment="Right" Text="{x:Bind server.DisplayAddress}"
                    VerticalAlignment="Top" Margin="0,0,10,0" Width="300" TextAlignment="Right" Grid.Row="1" />
-            <Image Source="Assets/User-64x64.png" HorizontalAlignment="Left" Height="32"
+            <Image Source="ms-appx:///Assets/User-64x64.png" HorizontalAlignment="Left" Height="32"
                Width="32" Margin="170,85,0,0" VerticalAlignment="Top" Grid.Row="1" />
             <TextBlock FontSize="24" Height="32" Margin="202,85,10,0"
                    Text="{x:Bind server.DisplayServerPlayers}" VerticalAlignment="Top" Grid.Row="1"
