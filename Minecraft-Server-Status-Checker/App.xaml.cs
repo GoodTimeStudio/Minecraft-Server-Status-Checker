@@ -68,12 +68,7 @@ namespace Minecraft_Server_Status_Checker
                 Window.Current.Content = rootFrame;
             }
 
-            //MC Server Status Checker ==========         
-            if (ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
-            {
-                HardwareButtons.BackPressed += CoreManager.OnBackPressed;
-            }
-            
+            //MC Server Status Checker ==========
             await CoreManager.InitApp();
 
             //===================================
