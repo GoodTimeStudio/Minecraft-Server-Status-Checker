@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
@@ -12,22 +14,16 @@ namespace Minecraft_Server_Status_Checker
 {
     public class CoreManager
     {
-
-        public static void OnBackPressed(object sender, BackPressedEventArgs e)
+        public async static Task InitApp()
         {
-            Frame rootFrame = Window.Current.Content as Frame;
-            
-            if (rootFrame != null && rootFrame.CanGoBack)
-            {
-                e.Handled = true;
-                rootFrame.GoBack();
-            }
+            MainPage.PreServers = await CoreManager.LoadServersList();
+
         }
 
         #region config
-        internal static async Task<ObservableCollection<Server>> LoadServersList()
+        internal static async Task<ServerListSerializer> LoadServersList()
         {
-            ObservableCollection<Server> ret = new ObservableCollection<Server>();
+            List<Server> ret = new List<Server>(); 
 
             StorageFolder folder = ApplicationData.Current.LocalFolder;
             try
@@ -35,17 +31,7 @@ namespace Minecraft_Server_Status_Checker
                 StorageFile file = await folder.GetFileAsync("servers.json");
                 string json = await FileIO.ReadTextAsync(file);
 
-                JsonObject obj = JsonObject.Parse(json);
-                JsonArray array = obj["servers"].GetArray();
-
-                foreach (JsonValue value in array)
-                {
-                    JsonObject SubObj = value.GetObject();
-                    Server server = new Server(SubObj["Name"].GetString(), SubObj["Address"].GetString(), int.Parse(SubObj["Port"].GetString()), Status.ServerVersion.MC_Current);
-                    ret.Add(server);
-                }
-
-                return ret;
+                return JsonConvert.DeserializeObject<ServerListSerializer>(json);
 
             }
             catch (FileNotFoundException)
@@ -61,28 +47,34 @@ namespace Minecraft_Server_Status_Checker
             return null;
         }
 
-        internal static async Task SaveServersList(ObservableCollection<Server> Servers)
+        internal static async Task SaveServersList(ServerListSerializer seriailizer)
         {
-            JsonObject obj = new JsonObject();
-            JsonArray array = new JsonArray();
-
-            foreach (Server ser in Servers)
+            if (seriailizer != null)
             {
-                JsonObject SubObj = new JsonObject();
-                SubObj["Name"] = JsonValue.CreateStringValue(ser.ServerName);
-                SubObj["Address"] = JsonValue.CreateStringValue(ser.ServerAddress);
-                SubObj["Port"] = JsonValue.CreateStringValue(ser.port.ToString());
+                string obj = JsonConvert.SerializeObject(seriailizer);
 
-                array.Add(SubObj);
+                StorageFolder folder = ApplicationData.Current.LocalFolder;
+                StorageFile file = await folder.CreateFileAsync("servers.json", CreationCollisionOption.ReplaceExisting);
+                await FileIO.WriteTextAsync(file, obj.ToString());
             }
+        }
 
-            obj["servers"] = array;
+        internal static async Task SaveServersList(IEnumerable<Server> ServerList, int SelectedServerIndex)
+        {
+            ServerListSerializer seriailizer = new ServerListSerializer();
+            seriailizer.ServerList = new List<Server>();
+            seriailizer.ServerList.AddRange(ServerList);
+            seriailizer.SelectedServerIndex = SelectedServerIndex;
 
-            StorageFolder folder = ApplicationData.Current.LocalFolder;
-            StorageFile file = await folder.CreateFileAsync("servers.json", CreationCollisionOption.ReplaceExisting);
-            await FileIO.WriteTextAsync(file, obj.ToString());
+            await SaveServersList(seriailizer);
         }
         #endregion
+    }
+
+    public class ServerListSerializer
+    {
+        public List<Server> ServerList;
+        public int SelectedServerIndex;
     }
 
 }

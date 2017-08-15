@@ -1,23 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text;
 using System.Threading.Tasks;
-using Windows.Data.Json;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Storage;
-using Windows.Storage.Streams;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
@@ -30,15 +17,15 @@ namespace Minecraft_Server_Status_Checker
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        public static ObservableCollection<Server> PreServers;
+        public static ServerListSerializer PreServers;
 
-        private ObservableCollection<Server> Servers;
-        public Server selected;
+        private ObservableCollection<ServerDisplaying> Servers;
+        public ServerDisplaying selected;
 
         private bool IsOnMultipleSelectionState;
         private VisualState PreState;
 
-        private List<Server> QueueList = new List<Server>();
+        private List<ServerDisplaying> QueueList = new List<ServerDisplaying>();
 
         public bool pinging
         {
@@ -57,17 +44,29 @@ namespace Minecraft_Server_Status_Checker
 
             if (PreServers != null)
             {
-                Servers = PreServers;
-                PreServers = null;
-
+                foreach (Server ser in PreServers.ServerList)
+                {
+                    Servers.Add((ServerDisplaying) ser);
+                }
             }
             else if (Servers == null)
             {
-                Servers = new ObservableCollection<Server>();
+                Servers = new ObservableCollection<ServerDisplaying>();
             }
 
             InitializeComponent();
+            if (PreServers != null && PreServers.SelectedServerIndex < Servers.Count)
+            {
+                ServerList.SelectedIndex = PreServers.SelectedServerIndex;
+            }
+
             Loaded += OnLoaded;
+            SystemNavigationManager.GetForCurrentView().BackRequested += OnBackPressed;
+        }
+
+        private void OnBackPressed(object sender, BackRequestedEventArgs e)
+        {
+
         }
 
         private async Task RefreshAsync()
@@ -156,16 +155,20 @@ namespace Minecraft_Server_Status_Checker
 
         private void ServerList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            selected = ServerList.SelectedItem as Server;
+            selected = ServerList.SelectedItem as ServerDisplaying;
             if (selected != null && !IsOnMultipleSelectionState)
             {
-                DetailContent.Navigate(typeof(ServerDetailsPage), selected, new SuppressNavigationTransitionInfo());
-                EnableContentTransitions();
+                if (DetailContent.CurrentSourcePageType == typeof(EmptyDetailPage))
+                {
+                    DetailContent.Navigate(typeof(ServerDetailsPage), selected, new SuppressNavigationTransitionInfo());
+                    EnableContentTransitions();
+                }
+                else
+                {
+                    DetailContent.Navigate(typeof(EmptyDetailPage), new SuppressNavigationTransitionInfo());
+                    EnableContentTransitions();
+                }
             }     
-            else
-            {
-                //DetailContent.Navigate(typeof(EmptyDetailPage));
-            }         
         }
 
         private void EnableContentTransitions()
@@ -188,10 +191,10 @@ namespace Minecraft_Server_Status_Checker
             {
                 this.textServerPort.Text = "25565";
             }
-            Server server = new Server(this.textServerName.Text, this.textServerAddress.Text, int.Parse(this.textServerPort.Text), Status.ServerVersion.MC_Current);
+            ServerDisplaying server = new ServerDisplaying(this.textServerName.Text, this.textServerAddress.Text, int.Parse(this.textServerPort.Text), Status.ServerVersion.MC_Current);
 
             Servers.Add(server);
-            await CoreManager.SaveServersList(Servers);
+            await CoreManager.SaveServersList(Servers, ServerList.SelectedIndex);
             AddToPingQueue(server);
             await StartPingAsync();
         }
@@ -233,16 +236,16 @@ namespace Minecraft_Server_Status_Checker
             VisualStateManager.GoToState(this, MultipleSelectionState.Name, true);
         }
 
-        private void DeleteItems_Click(object sender, RoutedEventArgs e)
+        private async void DeleteItems_Click(object sender, RoutedEventArgs e)
         {
-            Server[] InDeleteServerList = new Server[ServerList.SelectedItems.Count];
+            ServerDisplaying[] InDeleteServerList = new ServerDisplaying[ServerList.SelectedItems.Count];
             ServerList.SelectedItems.CopyTo(InDeleteServerList, 0);
-            foreach (Server server in InDeleteServerList) 
+            foreach (ServerDisplaying server in InDeleteServerList) 
             {
                 Servers.Remove(server);
             }
 
-            CoreManager.SaveServersList(Servers);
+            await CoreManager.SaveServersList(Servers, ServerList.SelectedIndex);
 
             if (PreState != null)
             {
@@ -280,7 +283,7 @@ namespace Minecraft_Server_Status_Checker
             return true;
         }
 
-        public void AddToPingQueue(Server server)
+        public void AddToPingQueue(ServerDisplaying server)
         {
             QueueList.Add(server);
         }
@@ -289,7 +292,7 @@ namespace Minecraft_Server_Status_Checker
         {
             pinging = true;
 
-            foreach (Server server in QueueList)
+            foreach (ServerDisplaying server in QueueList)
             {
                 await server.GetServerStatusAsync();
             }

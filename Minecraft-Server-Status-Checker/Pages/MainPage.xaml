@@ -113,7 +113,7 @@
             ItemsSource="{x:Bind Servers}" >
 
             <ListView.ItemTemplate>
-                <DataTemplate x:DataType="local:Server">
+                <DataTemplate x:DataType="local:ServerDisplaying">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="100" />

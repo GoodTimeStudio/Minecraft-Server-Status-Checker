@@ -15,7 +15,7 @@ namespace Minecraft_Server_Status_Checker
     /// </summary>
     public sealed partial class ServerDetailsPage : Page
     {
-        private Server server;
+        private ServerDisplaying server;
         private ObservableCollection<Player> sample;
         private String RemainPlayersMsg;
         private Visibility RemainPlayersMsgVisibility = Visibility.Collapsed;
@@ -73,7 +73,7 @@ namespace Minecraft_Server_Status_Checker
         {
             base.OnNavigatedTo(e);
 
-            server = e.Parameter as Server;
+            server = e.Parameter as ServerDisplaying;
             
         }
 

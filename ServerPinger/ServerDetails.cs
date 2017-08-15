@@ -31,7 +31,6 @@ namespace Minecraft_Server_Status_Checker.Status
     public class Description
     {
         public string text;
-        //TO-DO: extra (动态ping插件)
     }
 
     public class Player
