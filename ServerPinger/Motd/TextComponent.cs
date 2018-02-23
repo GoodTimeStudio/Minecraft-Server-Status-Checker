@@ -18,7 +18,7 @@ namespace Minecraft_Server_Status_Checker.Status.Motd
         public List<TextComponent> extra;
 
         /// <summary>
-        /// 进行一些处理，当此对象未基对象时才调用此方法
+        /// 进行一些处理，当此对象为基对象时才调用此方法
         /// </summary>
         internal void SetupBaseComponent()
         {
